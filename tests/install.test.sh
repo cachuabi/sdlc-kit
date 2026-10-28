@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Tests for install.sh (copies the kit into a target repo without clobbering user files).
 set -u
+# shellcheck source=lib.sh
 source "$(dirname "$0")/lib.sh"
 
 INSTALL="$ROOT/install.sh"
@@ -30,8 +31,9 @@ while IFS= read -r -d '' src; do
   [ -f "$repo/$rel" ] || missing="$missing $rel"
 done < <(find "$KIT" -type f -print0)
 assert_eq "every kit file is installed" "" "$missing"
-[ -x "$repo/.claude/hooks/guard.sh" ] && [ -x "$repo/scripts/check.sh" ]
-assert_eq "scripts are executable" 0 $?
+executable=no
+[ -x "$repo/.claude/hooks/guard.sh" ] && [ -x "$repo/scripts/check.sh" ] && executable=yes
+assert_eq "scripts are executable" yes "$executable"
 assert_contains ".gitignore ignores backups" ".sdlc-backup/" "$(cat "$repo/.gitignore")"
 assert_contains ".gitattributes keeps LF for scripts" "*.sh text eol=lf" "$(cat "$repo/.gitattributes")"
 

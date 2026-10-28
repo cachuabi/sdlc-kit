@@ -2,6 +2,7 @@
 # Shared helpers for the kit's shell tests. Source it; do not execute it.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck disable=SC2034  # read by the test files that source this one
 KIT="$ROOT/kit"
 PASS=0
 FAIL=0

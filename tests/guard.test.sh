@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Tests for kit/.claude/hooks/guard.sh (PreToolUse hook for Bash).
 set -u
+# shellcheck source=lib.sh
 source "$(dirname "$0")/lib.sh"
 
 GUARD="$KIT/.claude/hooks/guard.sh"
@@ -56,6 +57,7 @@ for cmd in \
 done
 
 echo "guard: destructive local git and file operations are blocked"
+# shellcheck disable=SC2016  # the literal $HOME is the point of one case
 for cmd in \
   'git commit --no-verify -m "x"' \
   "git reset --hard HEAD~1" \

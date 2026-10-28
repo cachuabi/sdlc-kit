@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Static checks over the kit: syntax, permissions and machine-readable config.
 set -u
+# shellcheck source=lib.sh
 source "$(dirname "$0")/lib.sh"
 
 echo "kit: every shell script parses and has a bash shebang"

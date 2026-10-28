@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Tests for kit/.claude/hooks/verify-on-stop.sh (Stop hook that enforces the quality gate).
 set -u
+# shellcheck source=lib.sh
 source "$(dirname "$0")/lib.sh"
 
 HOOK="$KIT/.claude/hooks/verify-on-stop.sh"

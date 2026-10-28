@@ -12,6 +12,7 @@ permissions:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -20,7 +21,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Shellcheck
         if: runner.os == 'Linux'
-        run: shellcheck -x install.sh kit/scripts/*.sh kit/scripts/lib/*.sh kit/.claude/hooks/*.sh tests/*.sh
+        run: shellcheck -x --source-path=SCRIPTDIR install.sh kit/scripts/*.sh kit/scripts/lib/*.sh kit/.claude/hooks/*.sh tests/*.sh
       - name: Tests
         run: |
           git config --global user.email ci@example.invalid

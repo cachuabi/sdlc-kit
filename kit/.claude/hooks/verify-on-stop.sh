@@ -32,7 +32,8 @@ warn_user() { # prints a JSON systemMessage, which Claude Code shows to the user
   if command -v jq >/dev/null 2>&1; then
     jq -cn --arg m "$text" '{systemMessage: $m}'
   else
-    printf '{"systemMessage": "%s"}\n' "$(printf '%s' "$text" | tr -d '"\\')"
+    # Without jq, drop quotes and backslashes so the hand-built JSON stays valid.
+    printf '{"systemMessage": "%s"}\n' "$(printf '%s' "$text" | tr -d '\042\134')"
   fi
 }
 

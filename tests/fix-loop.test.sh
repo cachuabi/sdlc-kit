@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Tests for kit/scripts/fix-loop.sh (deterministic check → Claude fix → re-check loop).
 set -u
+# shellcheck source=lib.sh
 source "$(dirname "$0")/lib.sh"
 
 LOOP="$KIT/scripts/fix-loop.sh"
