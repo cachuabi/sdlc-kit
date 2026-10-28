@@ -64,9 +64,20 @@ Sau khi cài:
 
 ### Thiết lập GitHub (một lần cho mỗi repo)
 
-1. Trong Claude Code, chạy `/install-github-app` để cài Claude GitHub App và secret. Hoặc tự thêm secret `ANTHROPIC_API_KEY`, hoặc `CLAUDE_CODE_OAUTH_TOKEN` lấy từ `claude setup-token`.
+1. Trong Claude Code, chạy `/install-github-app` để cài Claude GitHub App và secret. Để **không tốn thêm tiền**, chọn secret `CLAUDE_CODE_OAUTH_TOKEN` (lấy bằng `claude setup-token`) thay cho `ANTHROPIC_API_KEY`: xem mục [Chạy miễn phí](#chạy-miễn-phí).
 2. Tạo nhãn `claude`.
-3. Bật **branch protection** cho `main`: bắt buộc qua PR, bắt buộc status check **`check`** của CI, và ít nhất 1 approval.
+3. Bật **branch protection** cho `main`: bắt buộc qua PR, bắt buộc status check **`check`** của CI, chặn force push. Làm một mình thì để số approval bằng 0, vì GitHub không cho tác giả tự approve PR của mình. Có nhóm thì đặt ít nhất 1.
+
+### Chạy miễn phí
+
+| Thành phần | Miễn phí khi | Ghi chú |
+|---|---|---|
+| Branch protection | Repo **public** | Repo private trên gói Free không có tính năng này |
+| GitHub Actions (CI) | Repo **public**: không giới hạn | Repo private: 2.000 phút/tháng, và phút macOS bị tính gấp 10 lần. Nên chỉ chạy CI trên Ubuntu |
+| Claude trên GitHub | Dùng `CLAUDE_CODE_OAUTH_TOKEN` | Tính vào hạn mức gói Claude Pro/Max bạn đang dùng, không tốn thêm tiền. `ANTHROPIC_API_KEY` bị tính tiền theo token |
+| Claude Code trên máy | Gói Claude bạn đang có | Không cần gì thêm |
+
+Muốn hoàn toàn không phát sinh chi phí AI, chỉ cần không thêm secret nào. CI và các hook vẫn chạy bình thường; hai workflow Claude sẽ báo lỗi thiếu xác thực, hoặc bạn xoá `claude.yml` và `claude-review.yml` đi.
 
 ## Dùng hằng ngày
 
@@ -94,7 +105,7 @@ Sau khi cài:
 ## Giới hạn cần biết
 
 - **`guard.sh` là rào chắn chống nhầm lẫn và prompt injection, không phải sandbox.** Lệnh được viết lách khéo vẫn có thể lọt. Lớp bảo vệ thật nằm ở branch protection, quyền GitHub token, và việc không để secret trong repo. Đôi khi nó chặn nhầm, ví dụ một commit message có chứa chữ `rm -rf /`.
-- **Chi phí**: mỗi lần Claude chạy trên GitHub tốn token của tài khoản Anthropic. Review tự động chỉ chạy khi PR được mở hoặc chuyển sang ready, không chạy theo mỗi lần push.
+- **Hạn mức**: mỗi lần Claude chạy trên GitHub dùng hạn mức gói Claude của bạn (hoặc tốn tiền nếu dùng API key). Review tự động chỉ chạy khi PR được mở hoặc chuyển sang ready, không chạy theo mỗi lần push.
 - `claude.yml` cho Claude quyền ghi vào repo (trên nhánh `claude/…`). Chỉ người có quyền ghi mới kích hoạt được. **Không** bật `allowed_non_write_users`.
 - Windows: cần Git Bash hoặc WSL để chạy các hook `.sh`.
 - **Không nên đặt repo git trong OneDrive/Dropbox**: đồng bộ thư mục `.git` dễ làm hỏng repo. Hãy đẩy lên GitHub và làm việc ở một thư mục ngoài OneDrive.
