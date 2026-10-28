@@ -1,0 +1,29 @@
+# Tests for the kit itself (this repo), not for projects that install it.
+name: Test kit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Shellcheck
+        if: runner.os == 'Linux'
+        run: shellcheck -x --source-path=SCRIPTDIR install.sh kit/scripts/*.sh kit/scripts/lib/*.sh kit/.claude/hooks/*.sh tests/*.sh
+      - name: Tests
+        run: |
+          git config --global user.email ci@example.invalid
+          git config --global user.name ci
+          bash tests/run-all.sh

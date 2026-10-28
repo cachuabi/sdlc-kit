@@ -1,0 +1,5 @@
+# Hooks and scripts must keep LF line endings, or bash fails on Windows checkouts.
+*.sh text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.md text eol=lf

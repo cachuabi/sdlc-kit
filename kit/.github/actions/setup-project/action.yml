@@ -1,0 +1,32 @@
+name: Setup project
+description: Install the runtimes this repo uses (detected from its files) and its dependencies.
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      if: hashFiles('package.json') != ''
+      uses: actions/setup-node@v7
+      with:
+        node-version: lts/*
+
+    - name: Setup uv
+      if: hashFiles('uv.lock') != ''
+      uses: astral-sh/setup-uv@v10
+
+    - name: Setup Python
+      if: hashFiles('pyproject.toml', 'requirements.txt') != ''
+      uses: actions/setup-python@v7
+      with:
+        python-version: "3.12"
+
+    - name: Setup Go
+      if: hashFiles('go.mod') != ''
+      uses: actions/setup-go@v7
+      with:
+        go-version-file: go.mod
+
+    - name: Install dependencies
+      shell: bash
+      # Exit 3 means no stack was detected; the check step reports that loudly.
+      run: bash scripts/check.sh deps || [ $? -eq 3 ]
