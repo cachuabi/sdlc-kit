@@ -1,0 +1,46 @@
+name: Task cho Claude
+description: Một việc đủ rõ để Claude tự làm. Gắn nhãn "claude" khi đã sẵn sàng.
+title: "[task] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Claude chỉ làm tốt khi yêu cầu rõ. Viết như giao việc cho một đồng nghiệp mới:
+        cần làm gì, thế nào là xong, được và không được chạm vào đâu.
+        Khi đã sẵn sàng, gắn nhãn **claude** để Claude bắt đầu.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Mục tiêu
+      description: Cần thay đổi gì và vì sao (1–3 câu).
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Tiêu chí nghiệm thu
+      description: Mỗi dòng là một điều kiện kiểm chứng được. Claude sẽ viết test cho từng dòng.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Phạm vi
+      description: File, module hay API được phép thay đổi.
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Ngoài phạm vi
+      description: Những gì không được đụng tới (schema DB, API công khai, dependency mới…).
+  - type: dropdown
+    id: size
+    attributes:
+      label: Mức độ
+      options:
+        - Nhỏ (sửa typo, đổi config)
+        - Vừa (một bug, một endpoint)
+        - Lớn (tính năng qua nhiều module, nên chia nhỏ trước)
+    validations:
+      required: true
