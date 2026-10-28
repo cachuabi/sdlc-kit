@@ -36,4 +36,17 @@ for wf in claude.yml claude-review.yml; do
   assert_not_contains "$wf never sets allowed_non_write_users" "allowed_non_write_users" "$body"
 done
 
+echo "kit: Claude workflows skip with a notice when no Claude secret is set"
+for wf in claude.yml claude-review.yml; do
+  file="$KIT/.github/workflows/$wf"
+  body="$(cat "$file")"
+  assert_contains "$wf computes HAS_CLAUDE_AUTH" "HAS_CLAUDE_AUTH: \${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' }}" "$body"
+  assert_contains "$wf posts a notice when skipped" "::notice::" "$body"
+  assert_contains "$wf gates claude-code-action on HAS_CLAUDE_AUTH" "if: env.HAS_CLAUDE_AUTH == 'true'" \
+    "$(grep -A1 'uses: anthropics/claude-code-action@v1' "$file")"
+  # Every action step needs the gate, or it fails (or wastes minutes) without a secret.
+  assert_eq "$wf gates every action step" 0 \
+    "$(awk '/^ *- uses:/ { getline next_line; if (next_line !~ /if: env\.HAS_CLAUDE_AUTH == .true./) ungated++ } END { print ungated + 0 }' "$file")"
+done
+
 finish
