@@ -16,12 +16,21 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
+    env:
+      # Until a Claude secret is added, skip with a notice instead of failing every PR.
+      HAS_CLAUDE_AUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' }}
     steps:
+      - name: Claude auth not configured
+        if: env.HAS_CLAUDE_AUTH != 'true'
+        run: echo "::notice::AI review skipped - add the CLAUDE_CODE_OAUTH_TOKEN secret (claude setup-token) to enable it."
+
       - uses: actions/checkout@v7
+        if: env.HAS_CLAUDE_AUTH == 'true'
         with:
           fetch-depth: 0
 
       - uses: anthropics/claude-code-action@v1
+        if: env.HAS_CLAUDE_AUTH == 'true'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
